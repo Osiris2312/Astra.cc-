@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astra.cc - Premium Game Scripts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --dark-blue: #0a1128;
+            --medium-blue: #142850;
+            --light-blue: #1c3b6a;
+            --accent: #0091ff;
+            --accent-glow: rgba(0, 145, 255, 0.5);
+            --text: #f5f5f5;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .rain-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            border-radius: 0 0 5px 5px;
+            animation: rain linear infinite;
+        }
+
+        @keyframes rain {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(calc(100vh + 100px)); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInDown 1s ease;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .logo i {
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
+        }
+
+        .page {
+            display: none;
+            padding: 40px 0;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent) 0%, #5ce1e6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: #0077cc;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 145, 255, 0.4);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 145, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature:nth-child(1) { animation-delay: 0.2s; }
+        .feature:nth-child(2) { animation-delay: 0.4s; }
+        .feature:nth-child(3) { animation-delay: 0.6s; }
+        .feature:nth-child(4) { animation-delay: 0.8s; }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 145, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .feature:hover .feature-icon {
+            transform: scale(1.1);
+            background: rgba(0, 145, 255, 0.2);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .feature-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: var(--accent);
+            transition: all 0.3s;
+        }
+
+        .feature:hover .feature-icon svg {
+            fill: #5ce1e6;
+        }
+
+        .feature h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .feature p {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.2s; }
+        .product-card:nth-child(2) { animation-delay: 0.4s; }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .product-body {
+            padding: 25px;
+        }
+
+        .product-body p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .disabled {
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .disabled::after {
+            content: 'In Development';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff3333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .news-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .news-card:nth-child(1) { animation-delay: 0.2s; }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .news-header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .news-body {
+            padding: 25px;
+        }
+
+        .news-body p {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .news-date {
+            display: block;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .account-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 60px 0;
+        }
+
+        .account-icon {
+            font-size: 80px;
+            color: var(--accent);
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .account-content h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .account-content p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--medium-blue);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            border: 1px solid var(--light-blue);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: var(--light-blue);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.5;
+            border-left: 4px solid var(--accent);
+        }
+
+        .update-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 145, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff66;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { 
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% { 
+                opacity: 0.6;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="rain-background" id="rain"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-stars"></i>
+                Astra.cc
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="welcome">Welcome</a></li>
+                    <li><a href="#" class="nav-link" data-page="product">Get Product</a></li>
+                    <li><a href="#" class="nav-link" data-page="news">News</a></li>
+                    <li><a href="#" class="nav-link" data-page="account">Account</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section id="welcome" class="page active">
+                <div class="hero">
+                    <h1>Welcome to Astra.cc</h1>
+                    <p>Experience gaming like never before with our premium scripts. Astra.cc provides high-quality, undetected game enhancements that give you the competitive edge while keeping your account safe.</p>
+                    <div class="buttons">
+                        <a href="#" class="btn btn-primary" data-page="product">Get Product</a>
+                        <a href="https://discord.gg/nsFk3EkKfP" target="_blank" class="btn btn-secondary">Our Discord</a>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17 5V3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v2H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2h4a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2zm-2 14H9V4h6v15zm4-4h-2V6h2v9z"/>
+                            </svg>
+                        </div>
+                        <h3>Script for all games</h3>
+                        <p>Universal compatibility with all popular games and continuous support for new releases.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z"/>
+                            </svg>
+                        </div>
+                        <h3>Best bypasses</h3>
+                        <p>Advanced bypassing techniques to ensure your account remains safe and undetected.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                            </svg>
+                        </div>
+                        <h3>Fast support</h3>
+                        <p>24/7 customer support to help you with any issues or questions you may have.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79 2.73 2.71 7.15 2.71 9.88 0 1.36-1.35 2.04-3.13 2.04-4.9h2c0 1.98-.77 3.95-2.34 5.51-3.12 3.12-8.19 3.12-11.31 0-3.12-3.12-3.12-8.19 0-11.31 3.12-3.12 8.19-3.12 11.31 0L21 3v7.12z"/>
+                            </svg>
+                        </div>
+                        <h3>Daily updates</h3>
+                        <p>Daily updates to ensure compatibility with game patches and maintain undetectability.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="product" class="page">
+                <div class="hero">
+                    <h1>Our Products</h1>
+                    <p>Choose from our selection of premium game enhancements. Each product is meticulously crafted for performance and safety.</p>
+                </div>
+
+                <div class="product-grid">
+                    <div class="product-card">
+                        <div class="product-header">
+                            <h2>Astra.cc Script (Roblox)</h2>
+                        </div>
+                        <div class="product-body">
+                            <p>Our flagship product for Roblox with hundreds of features including aimbot, esp, and more. Compatible with all popular Roblox games.</p>
+                            <button class="btn btn-primary get-script-btn" data-product="roblox">Get Script</button>
+                        </div>
+                    </div>
+                    <div class="product-card disabled">
+                        <div class="product-header">
+                            <h2>Rust Internal</h2>
+                        </div>
+                        <div class="product-body">
+                            <p>Advanced internal cheat for Rust with features like player ESP, resource ESP, aim assistance, and more. Currently in development.</p>
+                            <button class="btn btn-secondary" disabled>Coming Soon</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="news" class="page">
+                <div class="hero">
+                    <h1>Latest News</h1>
+                    <p>Stay updated with the latest developments, updates, and announcements from Astra.cc</p>
+                </div>
+
+                <div class="news-grid">
+                    <div class="news-card">
+                        <div class="news-header">
+                            <h2>1.1.0 Update</h2>
+                            <span class="news-date">September 20, 2025</span>
+                        </div>
+                        <div class="news-body">
+                            <p>We're excited to announce the release of version 1.1.0! This update includes major performance improvements and several new features requested by our community.</p>
+                            <p>The update includes enhanced combat mechanics, improved visuals, and a completely redesigned user interface for better usability and experience.</p>
+                            <p>All existing users will receive this update automatically. New users can download the latest version from our product page.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="account" class="page">
+                <div class="account-content">
+                    <div class="account-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h2>Account Section</h2>
+                    <p>Our account management system is currently under development. We're working hard to bring you a seamless experience for managing your subscriptions, settings, and preferences.</p>
+                    <p>Please check back soon for updates on when this feature will be available.</p>
+                    <div class="update-status">
+                        <div class="status-indicator"></div>
+                        <span>In Development - Estimated Release: Q4 2025</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 Astra.cc. All rights reserved. This website is for educational purposes only.</p>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="scriptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Astra.cc Script</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Copy the following code and paste it into your executor:</p>
+                <div class="code-block" id="codeBlock">
+                    --Astra.cc 1.1.0<br>
+                    loadstring(game:HttpGet('https://raw.githubusercontent.com/Osiris2312/Astra.cc-/refs/heads/main/Astra.lua'))()
+                </div>
+                <button class="btn btn-primary" id="copyBtn">Copy to Clipboard</button>
+                <div class="update-status">
+                    <div class="status-indicator"></div>
+                    <span>Last updated: Today</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements for sound effects -->
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-hard-typewriter-click-1115.mp3" preload="auto"></audio>
+
+    <script>
+        // Create rain effect
+        function createRain() {
+            const rain = document.getElementById('rain');
+            const rainCount = 100;
+            
+            for (let i = 0; i < rainCount; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('rain-drop');
+                
+                drop.style.left = `${Math.random() * 100}%`;
+                drop.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`;
+                drop.style.animationDelay = `${Math.random() * 2}s`;
+                drop.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                rain.appendChild(drop);
+            }
+        }
+        
+        createRain();
+
+        // Sound effects
+        const clickSound = document.getElementById('clickSound');
+        const hoverSound = document.getElementById('hoverSound');
+        
+        // Play sound on button clicks
+        document.querySelectorAll('button, a, .nav-link').forEach(element => {
+            element.addEventListener('click', () => {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.log("Audio play failed:", e));
+            });
+            
+            element.addEventListener('mouseenter', () => {
+                hoverSound.currentTime = 0;
+                hoverSound.play().catch(e => console.log("Audio play failed:", e));
+            });
+        });
+
+        // Page navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPage = link.getAttribute('data-page');
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                link.classList.add('active');
+                
+                // Show target page
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(targetPage).classList.add('active');
+            });
+        });
+
+        // Buttons that navigate to product page
+        document.querySelectorAll('[data-page="product"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                document.querySelector('[data-page="product"]').classList.add('active');
+                
+                // Show product page
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById('product').classList.add('active');
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('scriptModal');
+        const closeBtn = document.querySelector('.close-btn');
+        const copyBtn = document.getElementById('copyBtn');
+        const codeBlock = document.getElementById('codeBlock');
+        const modalTitle = document.getElementById('modalTitle');
+
+        document.querySelectorAll('.get-script-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const product = btn.getAttribute('data-product');
+                
+                // Update modal content based on product
+                if (product === 'roblox') {
+                    modalTitle.textContent = 'Astra.cc Script (Roblox)';
+                    codeBlock.innerHTML = "--Astra.cc 1.1.0<br>loadstring(game:HttpGet('https://raw.githubusercontent.com/Osiris2312/Astra.cc-/refs/heads/main/Astra.lua'))()";
+                }
+                
+                modal.classList.add('active');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const textToCopy = codeBlock.textContent;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy to Clipboard';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+        });
+    </script>
+</body>
+</html>
